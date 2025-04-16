@@ -81,7 +81,7 @@ if __name__ == "__main__":
     import config
     data = get_data(config.CREDENTIALS_FILE, config.SPREADSHEET_ID, config.WORKSHEET_NAME)
 
-    player_list = ['もち', 'たちゃ', 'シャンタ', 'かわぬ', 'ほのに', 'へりこ', 'UMA', 'ふかひれ', 'あき', 'まつだ']
+    player_list = []
     teams = divide_teams_by_criteria(data, player_list, criteria=2)
     for i, team in enumerate(teams, start=1):
         print(f"チーム{i}: {team}")
