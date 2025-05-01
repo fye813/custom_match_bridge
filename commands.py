@@ -1,11 +1,15 @@
+# commands.py
 import discord
 from discord.ext import commands
 import config
 from ui import TeamSelectView
 
+# === intents を定義 ===
 intents = discord.Intents.default()
 intents.message_content = True
+intents.guild_scheduled_events = True
 
+# === Botインスタンスを作成 ===
 bot = commands.Bot(command_prefix="!", intents=intents)
 
 @bot.command()

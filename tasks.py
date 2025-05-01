@@ -6,7 +6,7 @@ from commands import bot  # commands.py で定義した bot をインポート
 
 # -------------- 定期イベント作成タスク --------------
 
-@tasks.loop(time=[datetime.time(8, 33, 0, tzinfo=datetime.timezone.utc)])
+@tasks.loop(time=[datetime.time(9, 30, 0, tzinfo=datetime.timezone.utc)])
 async def auto_create_event():
     """
     毎日UTC12:00（日本時間21:00）に起動し、木曜日のみボイスチャットイベントを作成します。
@@ -20,11 +20,10 @@ async def auto_create_event():
         print("ギルドが見つかりません。")
         return
 
-    voice_channels = [c for c in guild.channels if c.type == discord.ChannelType.voice]
-    if not voice_channels:
-        print("ボイスチャネルがありません。")
+    channel = bot.get_channel(config.DISCORD_VOICE_CHANNEL_ID)
+    if not channel or not isinstance(channel, discord.VoiceChannel):
+        print(f"指定されたボイスチャンネルID({config.DISCORD_VOICE_CHANNEL_ID})が見つかりません。")
         return
-    channel = voice_channels[0]
 
     # 「今」の木曜日から次の土曜日の日付を計算
     # weekday: 0=月,1=火,2=水,3=木,4=金,5=土,6=日
@@ -39,6 +38,13 @@ async def auto_create_event():
     )
 
     try:
+        with open("img.png", "rb") as f:
+            cover_data = f.read()
+    except FileNotFoundError:
+        cover_data = None
+        print("img.png が見つかりません。画像なしでイベントを作成します。")
+
+    try:
         event = await guild.create_scheduled_event(
             name="【定期】土曜深夜LoLカスタム",
             description=(
@@ -49,7 +55,8 @@ async def auto_create_event():
             entity_type=discord.EntityType.voice,
             privacy_level=discord.PrivacyLevel.guild_only,
             start_time=start_time,
-            channel=channel
+            channel=channel,
+            image=cover_data
         )
         
         announce_channel = bot.get_channel(config.DISCORD_CHANNEL_ID)
