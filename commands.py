@@ -1,4 +1,5 @@
 # commands.py
+import random
 import discord
 from discord.ext import commands
 import config
@@ -37,3 +38,8 @@ async def team(ctx):
 
     view = TeamSelectView(options)
     await ctx.send("下記のメニューから基準とプレイヤーを選択してください。", view=view)
+
+@bot.command()
+async def side(ctx):
+    random_side = random.choice(["Blue", "Red"])
+    await ctx.send(random_side)
